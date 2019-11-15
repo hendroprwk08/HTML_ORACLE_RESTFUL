@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ORACLE APEX RESTFUL</title>   
+        <script src="jquery-3.4.0.js"></script> 
+    </head>
+    <body>
+        <p><a href="insert_jabatan.html">TAMBAH DATA</a></p>
+        <img src="loader.gif" id="loader">
+        <table id="my_data" border="1">
+            <thead>
+                <th>ID</th>
+                <th>Jabatan</th>
+                <th>Gaji</th>
+                <th>Tunj. Anak</th>
+                <th>Tunj. Dinas</th>
+                <th>Tunj. Kesehatan</th>
+                <th>&nbsp;</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <script type="text/javascript">
+            $(function (){
+                var base_url = "https://apex.oracle.com/pls/apex/belajar_apex_10_11_2019/hrd_api/";
+                loadData();
+
+                function loadData(){
+                    $.ajax({
+                        url: base_url + "getjabatan", 
+                        dataType: "json",
+                        beforeSend:function(){
+                            $("#loader").show();
+                        },
+                        success: function(result){ 
+                            var rows, json = result.items; //ambil object "result"                        
+                            console.log(json);
+                            var row;
+
+                            //loop tampilkan data
+                            
+                            $("#mydata tr").remove(); //kosongkan table
+							$.each(json, function(key, val){
+								row +="<tr><td>"+val.idjabatan+"</td>";
+                                row +="<td>"+val.jabatan+"</td>";
+                                row +="<td>"+val.gapok+"</td>";
+                                row +="<td>"+val.tanak+"</td>";
+                                row +="<td>"+val.tdinas+"</td>";
+                                row +="<td>"+val.tkesehatan+"</td>";
+                                row +="<td><a href='#' class='delete' id='"+ val.idjabatan +"'>Hapus</a></td></tr>";
+							});
+
+                            $("#my_data tbody").append(row);
+                            $("#loader").fadeOut();
+
+                            //kalo dihapus
+                            $(".delete").click(function(){
+                                deleteData(this.id);
+                            });
+                        },
+                        error: function(xhr, textStatus, errorThrown){
+                            alert(xhr.status);
+                            $("#loader").fadeOut();
+                        }
+                    });             
+                }
+
+                function deleteData(id){
+                    $.ajax({
+                        url: base_url + "deletejabatan/"+id, 
+                        type: 'DELETE',
+                        dataType: "json",
+                        beforeSend:function(){
+                            $("#loader").show();
+                        },
+                        success: function(result){ 
+                            loadData();
+                            $("#loader").fadeOut();
+                        },
+                        error: function(xhr, textStatus, errorThrown){
+                            alert(xhr.status);
+                            $("#loader").fadeOut();
+                        }
+                    });             
+                }
+            });
+        </script>
+    </body>
+</html>
