@@ -32,13 +32,10 @@
                             $("#loader").show();
                         },
                         success: function(result){ 
-                            var rows, json = result.items; //ambil object "result"                        
-                            console.log(json);
-                            var row;
-
-                            //loop tampilkan data
+                            var row, json = result.items; //ambil object "result"   
                             
-                            $("#mydata tr").remove(); //kosongkan table
+                            //loop tampilkan data
+                            $("#my_data tbody tr").remove(); //kosongkan table
 							$.each(json, function(key, val){
 								row +="<tr><td>"+val.idjabatan+"</td>";
                                 row +="<td>"+val.jabatan+"</td>";
@@ -54,33 +51,35 @@
 
                             //kalo dihapus
                             $(".delete").click(function(){
-                                deleteData(this.id);
+                                var id = $(this).attr("id");
+                                
+                                $.ajax({
+                                    url: base_url + "deletejabatan/"+id, 
+                                    type: 'DELETE',
+                                    beforeSend:function(){
+                                        $("#loader").show();
+                                    },
+                                    success: function(result){ 
+                                        loadData();
+                                        $("#loader").fadeOut();
+                                    },
+                                    error: function(xhr, textStatus, errorThrown){
+                                        $("#loader").fadeOut();
+                                        if (xhr.status == 0) alert("Data sedang digunakan pada tabel lain");
+                                    }
+                                }); 
+                                      
                             });
                         },
                         error: function(xhr, textStatus, errorThrown){
-                            alert(xhr.status);
                             $("#loader").fadeOut();
+                            if (xhr.status == 0) alert("Data sedang digunakan pada tabel lain");
                         }
                     });             
                 }
 
                 function deleteData(id){
-                    $.ajax({
-                        url: base_url + "deletejabatan/"+id, 
-                        type: 'DELETE',
-                        dataType: "json",
-                        beforeSend:function(){
-                            $("#loader").show();
-                        },
-                        success: function(result){ 
-                            loadData();
-                            $("#loader").fadeOut();
-                        },
-                        error: function(xhr, textStatus, errorThrown){
-                            alert(xhr.status);
-                            $("#loader").fadeOut();
-                        }
-                    });             
+                        
                 }
             });
         </script>

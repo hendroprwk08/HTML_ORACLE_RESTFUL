@@ -6,53 +6,34 @@
     </head>
     <body>
         <p><a href="index.html">LIST DATA JABATAN</a></p>
-        <img src="loader.gif" id="loader">
-        <form>
-            ID Jabatan: <input type="text" id="id"/><br/>
-            Jabatan: <input type="text" id="jabatan"/><br/>
-            Gaji Pokok: <input type="text" id="gapok"/><br/>
-            Tunjangan Anak: <input type="text" id="tanak"/><br/>
-            Tunjangan Dinas: <input type="text" id="tdinas"/><br/>
-            Tunjangan Kesehatan: <input type="text" id="tkesehatan"/><br/>
-            <button id="simpan">SIMPAN</button>
-        </form>
+        ID Jabatan: <input type="text" id="id"/><br/>
+        Jabatan: <input type="text" id="jabatan"/><br/>
+        Gaji Pokok: <input type="text" id="gapok"/><br/>
+        Tunjangan Anak: <input type="text" id="tanak"/><br/>
+        Tunjangan Dinas: <input type="text" id="tdinas"/><br/>
+        Tunjangan Kesehatan: <input type="text" id="tkesehatan"/><br/>
+        <button id="simpan">SIMPAN</button><img src="loader.gif" id="loader">
+
         <script type="text/javascript">
             $(function (){
                 var base_url = "https://apex.oracle.com/pls/apex/belajar_apex_10_11_2019/hrd_api/";
                 $("#loader").hide();
 
                 $("#simpan").click(function(){
+                    
                     $.ajax({
-                        url: base_url + "getjabatan", 
-                        dataType: "json",
+                        type: 'POST',
+                        url: base_url + "postjabatan", 
+                        contentType: 'application/json', //wajib pake ini
+                        data: JSON.stringify({"idjabatan": $("#id").val(), "jabatan": $("#jabatan").val(), "gapok": $("#gapok").val(), "tanak": $("#tanak").val(), "tdinas": $("#tdinas").val(), "tkesehatan": $("#tkesehatan").val() }),
                         beforeSend:function(){
                             $("#loader").show();
                         },
                         success: function(result){ 
-                            var rows, json = result.items; //ambil object "result"                        
-                            console.log(json);
-                            var row;
-
-                            //loop tampilkan data
-                            
-                            $("#mydata tr").remove(); //kosongkan table
-							$.each(json, function(key, val){
-								row +="<tr><td>"+val.idjabatan+"</td>";
-                                row +="<td>"+val.jabatan+"</td>";
-                                row +="<td>"+val.gapok+"</td>";
-                                row +="<td>"+val.tanak+"</td>";
-                                row +="<td>"+val.tdinas+"</td>";
-                                row +="<td>"+val.tkesehatan+"</td>";
-                                row +="<td><a href='#' class='delete' id='"+ val.idjabatan +"'>Hapus</a></td></tr>";
-							});
-
-                            $("#my_data tbody").append(row);
+                            alert("Data "+ $("#id").val() +" - "+ $("#jabatan").val() +" berhasil disimpan");
                             $("#loader").fadeOut();
-
-                            //kalo dihapus
-                            
                         },
-                        error: function(xhr, textStatus, errorThrown){
+                        error: function(data, xhr, textStatus, errorThrown){
                             alert(xhr.status);
                             $("#loader").fadeOut();
                         }
